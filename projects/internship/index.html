@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Custom actuator R&D, featuring iterative harmonic drive design and literature-derived cycloidal architectures for complex kinematic chains.">
+    <title>High-Performance Actuator R&D | Techligence</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    <div class="content index py4">
+        
+        <header id="header">
+            <a class="u-url u-uid" href="/">
+                <div id="title">
+                    <h1 class="p-name">Parth Kharche</h1>
+                </div>
+            </a>
+            <div id="nav">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/certifications/">Certifications</a></li>
+                    <li><a href="/projects/">Projects</a></li>
+                    <li><a href="/assets/Parth_Kharche_Resume.pdf">Resume</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+            <div class="content" itemprop="articleBody">
+                
+                <!-- Main Arm Isometric View -->
+                <p><img src="/assets/humanoid_arm.png" alt="Isometric view of the 7+ DOF Arm" style="border-radius: 5px; width: 100%; max-width: 600px; border: 1px solid #333;"></p>
+                
+                <h1 style="color: #FFD700; margin-top: 0;">High-Performance Actuator R&D & Kinematic System Design</h1>
+                <p style="color: #aaa; font-style: italic;">Techligence Pvt. Ltd | May 2026 – July 2026</p>
+
+                <p>During my two-month internship at Techligence Pvt. Ltd., I took full ownership of the mechanical design and rapid iteration of custom high-performance actuators for a 7+ DOF anthropomorphic arm. Working strictly from first principles and academic literature, I analytically designed, CAD-modeled, and evaluated three distinct actuator architectures to handle complex kinematic loads. This included establishing a baseline 50:1 harmonic drive, engineering a dual-stage 49:1 cycloidal actuator to manage severe moment loads at the proximal joints, and developing a novel custom harmonic drive featuring an axially compressed, deflection-isolated flexspline. This concentrated R&D effort directly informed the mixed-actuator architecture required to balance torque density, backdrivability, and strict packaging constraints across the robotic arm.</p>
+                
+                <p style="font-size: 0.9em; border-left: 3px solid #FFD700; padding-left: 10px; color: #ccc;"><em>Note: Due to strict Non-Disclosure Agreements (NDA), full proprietary subsystem layouts and specific integration schematics are restricted from public display. The mechanical architectures detailed below focus strictly on my localized actuator R&D.</em></p>
+
+                <hr style="border: 0; border-top: 1px solid #444; margin: 30px 0;">
+
+                <h3 style="color: #fff; margin-bottom: 20px;">Literature-Derived Cycloidal Architecture (49:1)</h3>
+                <p>Engineered a highly specialized, dual-stage cycloidal actuator architecture based directly on findings from contemporary mechanical research papers. Designed exclusively for high-load proximal joints to manage and distribute severe moment loads across the assembly envelope.</p>
+                <ul>
+                    <li><strong>Kinematic Ratio:</strong> Achieved a precise 49:1 reduction ratio by implementing a 7-lobe primary stage feeding into a 6-lobe secondary stage.</li>
+                </ul>
+                
+                <!-- Cycloidal 3-View Grid -->
+                <div style="display: flex; gap: 10px; margin-bottom: 30px;">
+                    <div style="flex: 1;"><img src="/assets/new_cy_iso.png" alt="Cycloidal Isometric" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Isometric</p></div>
+                    <div style="flex: 1;"><img src="/assets/new_cy_exp.png" alt="Cycloidal Exploded" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Exploded</p></div>
+                    <div style="flex: 1;"><img src="/assets/new_cy_secn.png" alt="Cycloidal Section" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Section</p></div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #444; margin: 30px 0;">
+
+                <h3 style="color: #fff; margin-bottom: 20px;">Iterative Harmonic Drive Development</h3>
+                <p>Researched and developed custom harmonic drives by aggressively iterating flexspline geometry to maximize torque density and backdrivability for mid-joint integration.</p>
+
+                <h4 style="color: #FFD700; margin-bottom: 5px; font-size: 1.1em;">Standard Baseline (50:1 Ratio)</h4>
+                <!-- 50:1 Harmonic 3-View Grid -->
+                <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                    <div style="flex: 1;"><img src="/assets/50_redn_ratio.png" alt="50:1 Harmonic Isometric" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Isometric</p></div>
+                    <div style="flex: 1;"><img src="/assets/50_redn_ratio_expv.png" alt="50:1 Harmonic Exploded" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Exploded</p></div>
+                    <div style="flex: 1;"><img src="/assets/50_redn_ratio_section.png" alt="50:1 Harmonic Section" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Section</p></div>
+                </div>
+
+                <h4 style="color: #FFD700; margin-bottom: 5px; font-size: 1.1em;">Advanced Custom Flexspline Prototype</h4>
+                <p>Drove the structural design through successive iterations utilizing radial deflection limits and bending stress analysis as absolute primary constraints.</p>
+                <ul>
+                    <li><strong>Envelope Optimization:</strong> Engineered a custom flexspline cross-section that achieves high "cup-style" geometric efficiency within a significantly reduced axial envelope.</li>
+                    <li><strong>Deflection Isolation:</strong> Structurally isolated the flexspline wall so that primary radial deflection does not transmit destructive interference to the output disk.</li>
+                </ul>
+                
+                <!-- Custom Harmonic 2-View Grid (NO SECTION VIEW) -->
+                <div style="display: flex; gap: 15px; margin-bottom: 30px;">
+                    <div style="flex: 1;"><img src="/assets/harmonic_proto_25.png" alt="Custom Harmonic Isometric" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Isometric View</p></div>
+                    <div style="flex: 1;"><img src="/assets/hr_proto_25_exp.png" alt="Custom Harmonic Exploded" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Exploded View</p></div>
+                </div>
+                
+            </div>
+        </article>
+
+        <footer id="footer">
+            <div class="footer-left">
+                Copyright &copy; 2016-2026 Parth Kharche
+            </div>
+            <div class="footer-right">
+                <nav>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/certifications/">Certifications</a></li>
+                        <li><a href="/projects/">Projects</a></li>
+                        <li><a href="/assets/Parth_Kharche_Resume.pdf">Resume</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
