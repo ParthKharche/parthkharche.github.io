@@ -48,7 +48,7 @@
                 </h1>
 
                 <div style="font-size: 1.1em; line-height: 1.6; color: #c9cacc; margin-bottom: 15px;">
-                    I’m a <strong>Mechanical Engineering undergraduate</strong> at <strong>COEP Technological University, Pune</strong>, focused on precision mechanism design, high-torque actuators, and system-level robotics engineering. Alongside my core mechanical curriculum, I’m pursuing a <strong>Minor in Supply Chain Management</strong>, which sharpens how I think about scaling and deploying engineered systems beyond the prototype stage.
+                    I’m a <strong>Mechanical Engineering undergraduate</strong> at <strong>COEP Technological University, Pune</strong>, focused on precision mechanism design, high-torque actuators, and complex mechanical systems. Alongside my core mechanical curriculum, I am pursuing a <strong>Minor in Supply Chain Management</strong>, which sharpens how I approach manufacturing, tolerance scaling, and the full design-to-validation lifecycle.
                 </div>
 
                 <div style="font-size: 0.85em; margin-top: 0px; margin-bottom: 40px; opacity: 0.8;">
@@ -59,24 +59,38 @@
                 </div>
 
                 <h3>Mechanism Design & Precision Engineering</h3>
-                <p>My approach to engineering is to build from first principles and understand systems end-to-end — designing, fabricating, testing, and iterating close to the hardware. This is the throughline across my actuator research, my Major Project, and my industry work.</p>
+                <p>My engineering approach relies on first principles and end-to-end system ownership—designing, fabricating, testing, and iterating intimately with the hardware. Key highlights include:</p>
 
-                <p>I independently research a <strong>hybrid harmonic drive</strong>, and designed a 70 mm, 105.88:1 <strong>Compact High-Torque Actuator</strong> combining a planetary input stage with a 25:1 cycloidal output stage to achieve high torque and reduction density within a minimal envelope. This work is published as a paper on the compact planetary-cycloidal hybrid actuator, presented at ICASET 2026, with a journal extension currently under review.</p>
+                <ul>
+                    <li><strong>Compact High-Torque Actuator:</strong> Designed a 70 mm, 105.88:1 hybrid actuator combining a planetary input stage with a 25:1 cycloidal output. I analytically sized all gear geometry using the hunting tooth principle to minimize localized wear. This research was presented at ICASET 2026, with a journal extension under review.</li>
+                    <li><strong>Heavy-Duty Swerve Drive:</strong> Developing a modular omnidirectional drive rated for a 25 kg payload at an FOS of 2. Responsible for structural layout, gear ratio selection, and bearing specifications for the integrated planetary steering and high-torque wheel drive.</li>
+                    <li><strong>Dynamic Mechanism Iteration:</strong> Designed and owned a cam-actuated jumping mechanism for a competition robot, iterating from an initial 10 cm to a 21 cm jump height through successive spring preloading and structural isolation to prevent impact load transmission.</li>
+                </ul>
 
-                <p>I am currently working on my B.Tech Major Project, the <strong>Heavy-Duty Modular Swerve Drive System for Industrial and Vehicular Mobility Platforms</strong> — an omnidirectional swerve module built for 25 kg payload at FOS = 2, integrating a custom planetary gear mechanism for steering actuation with a high-torque wheel drive, along with structural layout, gear ratio selection, and bearing specification.</p>
+                <!-- NATIVE VIDEO EMBED EXAMPLE -->
+                <div style="margin: 30px 0; border: 1px solid #444; padding: 10px; border-radius: 5px;">
+                    <p style="font-size: 0.9em; margin-top: 0; color: #aaa;"><em>Hardware Validation: Actuator Testing & Mechanism Dynamics</em></p>
+                    <video width="100%" controls preload="metadata" style="border-radius: 4px;">
+                        <!-- Replace the src below with your actual local video path -->
+                        <source src="/assets/videos/hardware_test.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
 
-                <p>I'm also developing a <strong>Heavy-Duty Modular Swerve Drive System for Industrial and Vehicular Mobility Platforms</strong> — an omnidirectional swerve module rated for 25 kg payload at FOS = 2, integrating a custom planetary gear mechanism for steering actuation with a high-torque wheel drive, including structural layout, gear ratio selection, and bearing specification.</p>
+                <h3>Industry Experience & Applied Mechanics</h3>
+                <p>As a Mechanical Engineering Intern at Techligence Pvt. Ltd., I own the full design-to-validation cycle for complex subsystems. My work emphasizes rigorous constraint modeling and mixed-actuator architectures:</p>
+                <ul>
+                    <li><strong>Harmonic Drive Research:</strong> Analyzing flexspline radial deflection and bending stress to improve torque density and backdrivability in high-load joints.</li>
+                    <li><strong>7+ DOF Anthropomorphic Arm:</strong> Designing a kinematic chain utilizing cycloidal actuators at proximal joints, harmonic drives at mid-joints, and custom spur gear systems distally to balance torque density and packaging constraints.</li>
+                </ul>
 
-                <h3>Industry Experience & Robotics Systems</h3>
-                <p>I currently intern at a humanoid robotics company in Pune, where I design, manufacture, and test mechanical subsystems for a humanoid receptionist robot, research harmonic drives for humanoid joint torque density and backdrivability, and design a 7+ DOF anthropomorphic robotic arm using a mixed actuator architecture — cycloidal actuators at high-load proximal joints, harmonic drives at mid-joints, and custom spur gear servo motors at distal joints.</p>
-
-                <p>On the software side, I work with <strong>ROS 2</strong> and <strong>reinforcement learning</strong> for locomotion and control. I'm designing the mechatronics and propulsion subsystem for an autonomous surface vessel (ASV), including hull layout, propeller drive control, and gyroscopic stabilization, with an autopilot integrated against GPS, IMU, LiDAR, and ultrasound for autonomous operation and collision avoidance. In parallel, I'm building a custom humanoid model in <strong>MuJoCo</strong> from scratch and training locomotion policies with reinforcement learning, exploring reward shaping and joint torque constraints as part of a self-directed study in physical AI.</p>
+                <p>On the software and controls side, I am designing the mechatronics and propulsion subsystem for an autonomous surface vessel (ASV), integrating hull layout and gyroscopic stabilization. Concurrently, I am building custom kinematic models in <strong>MuJoCo</strong>, exploring joint torque constraints and stability criteria using reinforcement learning.</p>
 
                 <h3>Beyond the Lab</h3>
-                <p>Outside formal projects, I enjoy reading, self-directed learning, and hands-on building. I prefer deep technical dives over surface-level knowledge, and I’m currently studying Japanese (JLPT N5 passed) alongside my engineering work.</p>
+                <p>Outside of formal engineering projects, I prioritize deep technical dives, self-directed study, and hands-on manufacturing. I am also actively studying spoken Japanese and preparing for the JLPT N3 examination.</p>
 
                 <h3>Portfolio</h3>
-                <p>Check out my <a href="/projects/"><strong>Projects</strong></a> to see my work on Swerve Drives, Quadrupeds, and Robocon bots.</p>
+                <p>Check out my <a href="/projects/"><strong>Projects</strong></a> to dive deeper into the CAD, analytical sizing, and functional testing behind my mechanism designs.</p>
                 <p><a href="/assets/Parth_Kharche_Resume.pdf"><strong>📄 Download My Resume</strong></a></p>
             </div>
         </article>
