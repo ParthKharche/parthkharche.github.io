@@ -39,7 +39,7 @@
                 <h1 style="color: #FFD700; margin-top: 0;">High-Performance Actuator R&D & Kinematic System Design</h1>
                 <p style="color: #aaa; font-style: italic;">Techligence Pvt. Ltd | May 2026 – July 2026</p>
 
-                <p>During my two-month internship at Techligence Pvt. Ltd., I took full ownership of the mechanical design and rapid iteration of custom high-performance actuators for a 7+ DOF anthropomorphic arm, alongside developing structural subsystems for an AI receptionist robot. Working strictly from first principles and academic literature, I analytically designed, CAD-modeled, and evaluated three distinct actuator architectures to handle complex kinematic loads. This included establishing a baseline 50:1 harmonic drive, engineering a dual-stage 49:1 cycloidal actuator to manage severe moment loads at the proximal joints, and developing a novel custom harmonic drive featuring an axially compressed, deflection-isolated flexspline. Concurrently, I drove the design-to-validation cycle for the receptionist robot's mechanical assemblies to ensure robust deployment reliability.</p>
+                <p>During my two-month internship at Techligence Pvt. Ltd., I took full ownership of the mechanical design and rapid iteration of custom high-performance actuators for a 7+ DOF anthropomorphic arm, alongside developing structural subsystems for an AI receptionist robot. Working strictly from first principles and academic literature, I analytically designed, CAD-modeled, and evaluated distinct actuator architectures to handle complex kinematic loads. This included establishing a 50:1 harmonic drive prototype, engineering a dual-stage 49:1 cycloidal actuator to manage severe moment loads at the proximal joints, and developing an ultra-compact pancake-type harmonic drive. Concurrently, I drove the design-to-validation cycle for the receptionist robot's mechanical assemblies to ensure robust deployment reliability.</p>
                 
                 <p style="font-size: 0.9em; border-left: 3px solid #FFD700; padding-left: 10px; color: #ccc;"><em>Note: Due to strict Non-Disclosure Agreements (NDA), full proprietary subsystem layouts and specific integration schematics are restricted from public display. The mechanical architectures detailed below focus strictly on my localized actuator R&D and subsystem verification workflows.</em></p>
 
@@ -50,6 +50,7 @@
                 <ul>
                     <li><strong>Design-to-Validation Cycle:</strong> Supervised full physical synthesis including detailed CAD creation, physical prototyping, and empirical testing under expected service envelopes.</li>
                     <li><strong>Precision Manufacturing:</strong> Executed meticulous linear and radial tolerance stack-up analyses to mitigate assembly interferences and guide precision CNC machining and manufacturing parameters.</li>
+                    <li><strong>Hardware Demo:</strong> 🔗 <a target="_blank" rel="noopener" href="https://drive.google.com/file/d/1PkLx7wKoshvUz1IZeASmfaB4fk8mMKwG/view?usp=sharing" style="color: #FFD700; text-decoration: underline;">Watch Receptionist Robot Demo (Google Drive)</a></li>
                 </ul>
 
                 <hr style="border: 0; border-top: 1px solid #444; margin: 30px 0;">
@@ -71,9 +72,9 @@
                 <hr style="border: 0; border-top: 1px solid #444; margin: 30px 0;">
 
                 <h3 style="color: #fff; margin-bottom: 20px;">Iterative Harmonic Drive Development</h3>
-                <p>Researched and developed custom harmonic drives by aggressively iterating flexspline geometry to maximize torque density and backdrivability for mid-joint integration.</p>
+                <p>Researched and developed harmonic drives by aggressively iterating flexspline geometry to maximize torque density and backdrivability for mid-joint integration. <strong>Both prototype iterations detailed below feature a fully custom flexspline architecture.</strong></p>
 
-                <h4 style="color: #FFD700; margin-bottom: 5px; font-size: 1.1em;">Standard Baseline (50:1 Ratio)</h4>
+                <h4 style="color: #FFD700; margin-bottom: 5px; font-size: 1.1em;">Standard Custom Baseline (50:1 Ratio)</h4>
                 <!-- 50:1 Harmonic 3-View Grid -->
                 <div style="display: flex; gap: 10px; margin-bottom: 25px;">
                     <div style="flex: 1;"><img src="/assets/50_redn_ratio.png" alt="50:1 Harmonic Isometric" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Isometric</p></div>
@@ -81,17 +82,23 @@
                     <div style="flex: 1;"><img src="/assets/50_redn_ratio_section.png" alt="50:1 Harmonic Section" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Section</p></div>
                 </div>
 
-                <h4 style="color: #FFD700; margin-bottom: 5px; font-size: 1.1em;">Advanced Custom Flexspline Prototype</h4>
+                <h4 style="color: #FFD700; margin-bottom: 5px; font-size: 1.1em;">Advanced "Pancake-Type" Flexspline Prototype</h4>
                 <p>Drove the structural design through successive iterations utilizing radial deflection limits and bending stress analysis as absolute primary constraints.</p>
                 <ul>
-                    <li><strong>Envelope Optimization:</strong> Engineered a custom flexspline cross-section that achieves high "cup-style" geometric efficiency within a significantly reduced axial envelope.</li>
+                    <li><strong>Envelope Optimization:</strong> Engineered a custom flexspline cross-section that achieves high "cup-style" geometric efficiency within a significantly reduced axial envelope, resulting in an ultra-compact "pancake" form factor.</li>
                     <li><strong>Deflection Isolation:</strong> Structurally isolated the flexspline wall so that primary radial deflection does not transmit destructive interference to the output disk.</li>
                 </ul>
                 
-                <!-- Custom Harmonic 2-View Grid (NO SECTION VIEW) -->
+                <!-- Pancake Custom Harmonic Grid (NO SECTION VIEW) -->
                 <div style="display: flex; gap: 15px; margin-bottom: 30px;">
                     <div style="flex: 1;"><img src="/assets/harmonic_proto_25.png" alt="Custom Harmonic Isometric" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Isometric View</p></div>
                     <div style="flex: 1;"><img src="/assets/hr_proto_25_exp.png" alt="Custom Harmonic Exploded" style="width: 100%; border-radius: 5px; border: 1px solid #333;"><p style="font-size: 0.8em; color: #888; text-align: center;">Exploded View</p></div>
+                </div>
+
+                <!-- Photograph of Pancake Proto -->
+                <div style="margin-bottom: 30px;">
+                    <img src="/assets/pn_proto.jpg" alt="Photograph of the physical Pancake Harmonic Prototype" style="width: 100%; border-radius: 5px; border: 1px solid #333;">
+                    <p style="font-size: 0.85em; color: #888; text-align: center; margin-top: 5px;"><em>Physical hardware execution of the ultra-compact pancake-type harmonic prototype.</em></p>
                 </div>
                 
             </div>
