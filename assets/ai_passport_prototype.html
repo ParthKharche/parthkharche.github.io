@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Passport | Audit & Access Control</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Strict Black, White, Silver Palette */
+            --bg-base: #ffffff;
+            --bg-panel: #fafafa;
+            --text-primary: #000000;
+            --text-secondary: #555555;
+            --text-tertiary: #888888;
+            --border-light: #e5e5e5;
+            --border-medium: #cccccc;
+            --border-dark: #999999;
+            
+            /* The requested silver gradient accent */
+            --silver-gradient: linear-gradient(135deg, #ffffff 0%, #dcdcdc 100%);
+            --silver-gradient-hover: linear-gradient(135deg, #f0f0f0 0%, #c8c8c8 100%);
+            
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+            
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.5;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .sidebar {
+            width: 260px;
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-base);
+            z-index: 10;
+        }
+
+        .brand {
+            padding: 24px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-icon {
+            width: 16px;
+            height: 16px;
+            background: var(--text-primary);
+            border-radius: 2px;
+        }
+
+        .nav-links {
+            flex: 1;
+            padding: 24px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            padding: 10px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-panel);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--silver-gradient);
+            color: var(--text-primary);
+            font-weight: 500;
+            border: 1px solid var(--border-medium);
+        }
+
+        .user-profile {
+            padding: 24px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--silver-gradient);
+            border: 1px solid var(--border-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .user-handle {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-base);
+        }
+
+        .stat-card {
+            padding: 24px 32px;
+            border-right: 1px solid var(--border-light);
+        }
+        
+        .stat-card:last-child {
+            border-right: none;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 300;
+            font-family: var(--font-mono);
+        }
+
+        .view-container {
+            padding: 32px;
+            display: none; /* toggled via JS */
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .view-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            border: 1px solid var(--border-light);
+            background: var(--bg-base);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--border-dark);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .card-type {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+            padding: 2px 6px;
+            border-radius: 2px;
+            align-self: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .card-meta {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-bottom: 24px;
+            flex: 1;
+        }
+
+        .card-title.clickable {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: transparent;
+            transition: text-decoration-color 0.2s;
+        }
+        
+        .card-title.clickable:hover {
+            text-decoration-color: var(--text-primary);
+        }
+
+        .viewer-wrapper {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            min-height: 400px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            border-radius: 2px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .watermark-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="350" height="250" opacity="0.08"><text x="10" y="125" transform="rotate(-25 175 125)" font-family="monospace" font-size="16" fill="black">AI PASSPORT @parth %7C VIEW-ONLY</text></svg>');
+            background-repeat: repeat;
+        }
+        
+        .viewer-content {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Rich Document Layout Styles */
+        .doc-layout {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            padding-bottom: 40px;
+        }
+
+        .doc-paragraph {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            text-align: justify;
+        }
+
+        .doc-visual-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .doc-visual-card {
+            background: var(--bg-base);
+            border: 1px solid var(--border-medium);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-subtle);
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .doc-caption {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+            padding-top: 12px;
+            width: 100%;
+        }
+
+        /* Audit Stats Styles */
+        .audit-stats-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-medium);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-radius: 2px;
+        }
+
+        .audit-stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 8px;
+        }
+
+        .audit-stat-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: 1px solid var(--text-primary);
+            background: var(--bg-base);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-family: var(--font-sans);
+        }
+
+        .btn:hover {
+            background: var(--silver-gradient-hover);
+        }
+
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-base);
+        }
+
+        .btn-primary:hover {
+            background: var(--text-secondary);
+            border-color: var(--text-secondary);
+        }
+
+        .table-container {
+            border: 1px solid var(--border-light);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.9rem;
+        }
+
+        th {
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--bg-panel);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr {
+            transition: background 0.2s;
+        }
+
+        tr.interactive:hover {
+            background: var(--bg-panel);
+            cursor: pointer;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .td-mono {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            border-radius: 2px;
+            border: 1px solid;
+        }
+
+        .status-active {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+            background: var(--silver-gradient);
+        }
+
+        .status-revoked {
+            border-color: var(--border-medium);
+            color: var(--text-tertiary);
+            text-decoration: line-through;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--bg-base);
+            border: 1px solid var(--border-medium);
+            width: 100%;
+            max-width: 540px;
+            max-height: 90vh;
+            box-shadow: var(--shadow-modal);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .modal-subtitle {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            word-break: break-all;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Component Checkbox List */
+        .component-list {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-medium);
+            border-radius: 2px;
+            overflow: hidden;
+            background: var(--bg-base);
+        }
+
+        .component-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .component-item:last-child {
+            border-bottom: none;
+        }
+
+        .component-item:hover {
+            background: var(--bg-panel);
+        }
+        
+        /* Disabled item for Title (always on) */
+        .component-item.disabled {
+            background: var(--bg-panel);
+            cursor: not-allowed;
+        }
+        
+        .component-item.disabled .component-name {
+            color: var(--text-tertiary);
+        }
+
+        .component-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        select.form-input {
+            padding: 10px;
+            border: 1px solid var(--border-medium);
+            border-radius: 2px;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            background: var(--bg-base);
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* Toggles */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toggle-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .toggle-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            background: var(--border-medium);
+            border-radius: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: var(--bg-base);
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active { background: var(--text-primary); }
+        .toggle-switch.active::after { transform: translateX(18px); }
+        
+        /* Fixed toggle style (always on) */
+        .toggle-switch.fixed {
+            background: var(--text-tertiary);
+            cursor: not-allowed;
+        }
+        .toggle-switch.fixed::after {
+            transform: translateX(18px);
+            background: var(--bg-base);
+            box-shadow: none;
+        }
+
+        /* Passkey box */
+        .passkey-box {
+            background: var(--silver-gradient);
+            border: 1px solid var(--border-medium);
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .passkey-value {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-footer .btn { flex: 1; }
+
+        .audit-panel-overlay {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: rgba(255,255,255,0.7);
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .audit-panel-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .audit-panel {
+            position: absolute;
+            top: 0; right: -600px; bottom: 0;
+            width: 540px;
+            background: var(--bg-base);
+            border-left: 1px solid var(--border-medium);
+            box-shadow: -10px 0 20px -10px rgba(0,0,0,0.1);
+            z-index: 51;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .audit-panel.active { right: 0; }
+
+        .audit-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--silver-gradient);
+        }
+
+        .audit-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .audit-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .json-block {
+            background: var(--text-primary);
+            color: var(--bg-base);
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            border-radius: 2px;
+        }
+
+        .json-key { color: #a1a1aa; }
+        .json-string { color: #e4e4e7; }
+        .json-number { color: #d1d5db; }
+        .json-boolean { color: #facc15; }
+        .json-bracket { color: #9ca3af; }
+
+        .timeline {
+            border-left: 1px solid var(--border-medium);
+            margin-left: 12px;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .timeline-item { position: relative; }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 4px;
+            width: 7px;
+            height: 7px;
+            background: var(--text-primary);
+            border-radius: 50%;
+        }
+
+        .timeline-time {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .timeline-desc {
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-primary);
+            color: var(--bg-base);
+            padding: 12px 24px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"></div>
+            AI Passport
+        </div>
+        <nav class="nav-links">
+            <div class="nav-item active" data-target="vaultView" onclick="switchView('vaultView')">
+                <span>Vault (Originals)</span>
+                <span style="font-family: var(--font-mono); font-size: 0.75rem;">4</span>
+            </div>
+            <div class="nav-item" data-target="dashboardView" onclick="switchView('dashboardView')">
+                <span>Active Shares & Audit</span>
+                <span id="navActiveCount" style="font-family: var(--font-mono); font-size: 0.75rem;">1</span>
+            </div>
+        </nav>
+        <div class="user-profile">
+            <div class="avatar">PK</div>
+            <div class="user-info">
+                <span class="user-name">Parth Kharche</span>
+                <span class="user-handle">@parth</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <!-- Aggregate Stats Header -->
+        <header class="header-stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Recipients</div>
+                <div class="stat-value" id="statRecipients">1</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Shares</div>
+                <div class="stat-value" id="statActive">1</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Expirations (7d)</div>
+                <div class="stat-value" id="statExpired">0</div>
+            </div>
+        </header>
+
+        <div id="vaultView" class="view-container active">
+            <div class="section-title">
+                Vault
+            </div>
+            <div class="grid" id="projectGrid">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <div id="viewerView" class="view-container">
+            <div class="section-title" style="display: flex; justify-content: flex-start; gap: 16px; align-items: center;">
+                <button class="btn btn-sm" onclick="switchView('vaultView')">&larr; Back</button>
+                <span id="viewerTitle" style="font-family: var(--font-mono); font-size: 1rem;">Asset Name</span>
+            </div>
+            <div class="viewer-wrapper">
+                <div class="watermark-overlay"></div>
+                <div id="viewerContent" class="viewer-content">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+            <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+                <button class="btn btn-primary" id="viewerShareBtn">Share Access</button>
+            </div>
+        </div>
+
+        <div id="dashboardView" class="view-container">
+            <div class="section-title">
+                Monitoring Dashboard
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Project / Asset</th>
+                            <th>Recipient</th>
+                            <th>Passkey / Auth ID</th>
+                            <th>Time Remaining</th>
+                            <th>Views</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sharesTableBody">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="audit-panel-overlay" id="auditOverlay" onclick="closeAuditPanel()"></div>
+        <div class="audit-panel" id="auditPanel">
+            <div class="audit-header">
+                <div class="audit-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Cryptographic Audit Receipt
+                </div>
+                <button class="modal-close" onclick="closeAuditPanel()">&times;</button>
+            </div>
+            <div class="audit-body">
+                <div>
+                    <div class="form-label" style="margin-bottom: 8px;">Signature Verification (Simulated)</div>
+                    <div class="json-block" id="auditJson">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+                
+                <div id="auditAssetStats">
+                    <!-- Populated via JS -->
+                </div>
+
+                <div>
+                    <div class="form-label" style="margin-bottom: 16px;">Session Log</div>
+                    <div class="timeline" id="auditTimeline">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">Share via AI Passport</div>
+                    <div class="modal-subtitle" id="modalFileName">Filename.ext</div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body" id="modalSetupState">
+                
+                <div class="form-group">
+                    <label class="form-label">Granted Components</label>
+                    <div class="component-list">
+                        <!-- Title (Always on) -->
+                        <div class="component-item disabled">
+                            <span class="component-name">Title (Required)</span>
+                            <div class="toggle-switch fixed"></div>
+                        </div>
+                        
+                        <!-- Independent Toggles -->
+                        <div class="component-item" onclick="toggleComponent('comp-abstract')">
+                            <span class="component-name">Abstract / Summary</span>
+                            <div class="toggle-switch active" id="comp-abstract"></div>
+                        </div>
+                        <div class="component-item" onclick="toggleComponent('comp-images')">
+                            <span class="component-name">Images / Renders</span>
+                            <div class="toggle-switch" id="comp-images"></div>
+                        </div>
+                        <div class="component-item" onclick="toggleComponent('comp-model')">
+                            <span class="component-name">3D Model / CAD View</span>
+                            <div class="toggle-switch" id="comp-model"></div>
+                        </div>
+                        <div class="component-item" onclick="toggleComponent('comp-data')">
+                            <span class="component-name">Data / Dataset</span>
+                            <div class="toggle-switch" id="comp-data"></div>
+                        </div>
+                        <div class="component-item" onclick="toggleComponent('comp-graphs')">
+                            <span class="component-name">Graphs / Charts</span>
+                            <div class="toggle-switch" id="comp-graphs"></div>
+                        </div>
+                        <div class="component-item" onclick="toggleComponent('comp-references')">
+                            <span class="component-name">References / Sources</span>
+                            <div class="toggle-switch" id="comp-references"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Recipient Label</label>
+                    <input type="text" id="recipientInput" class="form-input" style="padding: 10px; border: 1px solid var(--border-medium); width: 100%; font-family: var(--font-sans);" placeholder="e.g. Acme Corp Hiring Team">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Access Window</label>
+                    <select class="form-input" id="accessWindow">
+                        <option value="24h">24 Hours</option>
+                        <option value="72h">72 Hours</option>
+                        <option value="7d">7 Days</option>
+                    </select>
+                </div>
+
+                <div class="toggle-row" style="margin-top: 8px;">
+                    <div class="toggle-info">
+                        <span class="toggle-title">Dynamic Session Watermark</span>
+                        <span class="toggle-desc">Overlays viewer IP and timestamp</span>
+                    </div>
+                    <div class="toggle-switch active" id="watermarkToggle" onclick="this.classList.toggle('active')"></div>
+                </div>
+
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <span class="toggle-title">Require Payment Escrow</span>
+                        <span class="toggle-desc">Gate full access pending invoice clearance</span>
+                    </div>
+                    <div class="toggle-switch" id="paymentToggle" onclick="this.classList.toggle('active')"></div>
+                </div>
+
+                <div class="form-group" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-light);">
+                    <label class="form-label">Generated Passkey</label>
+                    <div class="passkey-box">
+                        <span class="passkey-value" id="generatedPasskey">PASS-0000-XXX</span>
+                        <button class="btn btn-sm" onclick="copyPasskey()">Copy Link</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body" id="modalProcessingState" style="display: none; align-items: center; justify-content: center; padding: 48px;">
+                <div style="font-family: var(--font-mono); font-size: 0.9rem; text-align: center;">
+                    <div style="margin-bottom: 16px;">Generating Cryptographic Proof...</div>
+                    <div style="width: 100%; height: 4px; background: var(--border-light); overflow: hidden;">
+                        <div style="width: 50%; height: 100%; background: var(--text-primary); animation: slide 1s infinite;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                @keyframes slide {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(200%); }
+                }
+            </style>
+
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="activateShare()">Activate Passport Link & Generate Receipt</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Message here</div>
+
+    <script>
+        // State
+        const projects = [
+            { 
+                id: 'p1', name: "Cycloidal Shoulder Drive — Actuator Assembly.STEP", type: "CAD", size: "14.2 MB", date: "2026-08-10",
+                desc: "This design specification details a novel cycloidal reduction drive designed for robotic shoulder joints. It achieves a 40:1 reduction in a highly compact form factor, utilizing dual eccentric cams to completely eliminate mechanical backlash. The primary materials specified are hardened 4140 steel for the pins and a lightweight 7075 aluminum housing. Load simulations indicate a peak torque handling of 120 Nm before plastic deformation.",
+                auditStats: { previousAccesses: 12, paymentRequiredCount: 3, paidBy: ["Boston Dynamics", "RoboCorp"], totalVisitors: 18 }
+            },
+            { 
+                id: 'p2', name: "Wind Tunnel CFD Analysis — Turbojet Intake.CSV", type: "DATA", size: "8.5 MB", date: "2026-08-09",
+                desc: "Computational Fluid Dynamics (CFD) results for the modified turbojet intake geometry operating at Mach 1.2 to Mach 2.4. The dataset includes pressure distribution arrays, velocity vector fields, and boundary layer separation points. Key findings highlight a 14% reduction in pressure recovery loss at high angles of attack compared to the baseline conical shock spike design.",
+                auditStats: { previousAccesses: 4, paymentRequiredCount: 4, paidBy: ["Lockheed Martin"], totalVisitors: 7 }
+            },
+            { 
+                id: 'p3', name: "Autonomous Surface Vessel — Sensor Suite Schematic.DWG", type: "CAD", size: "22.1 MB", date: "2026-08-05",
+                desc: "Complete electrical and spatial schematic for the ASV (Autonomous Surface Vessel) multi-sensor mast. Includes wiring diagrams and mounting tolerances for the LIDAR array, thermal imaging cameras, and the X-band marine radar. The configuration ensures 360-degree coverage with overlapping FOVs to provide redundancy in adverse maritime weather conditions.",
+                auditStats: { previousAccesses: 22, paymentRequiredCount: 15, paidBy: ["Ocean Infinity", "Saildrone", "Navy Research"], totalVisitors: 41 }
+            },
+            { 
+                id: 'p4', name: "Boat Hull Profile — Research Paper Draft.PDF", type: "DOC", size: "4.3 MB", date: "2026-08-01",
+                desc: "Draft manuscript detailing empirical tank-testing results for a stepped-hull design optimized for electric fast-ferries. The paper correlates specific step-geometries with drag reduction at varying Froude numbers. Included are the raw tow-tank resistance graphs, flow visualization photographs, and the derived mathematical model for predicting ventilation layer stability.",
+                auditStats: { previousAccesses: 5, paymentRequiredCount: 0, paidBy: [], totalVisitors: 5 }
+            }
+        ];
+
+        let shares = [
+            {
+                id: 's1',
+                projectId: 'p3',
+                recipient: "Oceanic Systems Inc.",
+                passkey: "PASS-902-VXQ",
+                timeRemaining: "Expired",
+                views: 4,
+                status: "expired",
+                components: ["title", "abstract", "images", "model"], // Replaced layer string with array
+                watermark: true,
+                payment: false,
+                timestamp: new Date(Date.now() - 864000000).toISOString(),
+                history: [
+                    { time: new Date(Date.now() - 864000000).toISOString(), event: "Passport Link Generated" },
+                    { time: new Date(Date.now() - 800000000).toISOString(), event: "Session Initialized (IP: 192.168.1.1)" },
+                    { time: new Date(Date.now() - 799000000).toISOString(), event: "View Requested: Abstract & Model" },
+                    { time: new Date(Date.now() - 100000).toISOString(), event: "Access Window Expired automatically" }
+                ]
+            }
+        ];
+
+        let currentShareSetup = null;
+
+        function init() {
+            renderVault();
+            renderDashboard();
+            updateStats();
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(v => v.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            document.querySelector(`[data-target="${viewId}"]`).classList.add('active');
+        }
+
+        function renderVault() {
+            const grid = document.getElementById('projectGrid');
+            grid.innerHTML = projects.map(p => `
+                <div class="card">
+                    <div class="card-type">${p.type}</div>
+                    <div class="card-title clickable" onclick="openViewer('${p.id}', true)">${p.name}</div>
+                    <div class="card-meta">${p.size} &bull; Uploaded ${p.date}</div>
+                    <button class="btn" onclick="openShareModal('${p.id}')">Share Access</button>
+                </div>
+            `).join('');
+        }
+
+        // isOwner is true when opening from Vault, meaning show everything.
+        // If false, it would filter based on a share's component array.
+        function openViewer(projectId, isOwner = true, grantedComponents = []) {
+            const project = projects.find(p => p.id === projectId);
+            document.getElementById('viewerTitle').innerText = project.name;
+            document.getElementById('viewerShareBtn').onclick = () => openShareModal(project.id);
+            
+            // Reset scroll position when opening a new file
+            document.getElementById('viewerContent').scrollTop = 0;
+            
+            const content = document.getElementById('viewerContent');
+            content.innerHTML = generateMockVisual(project.id, isOwner, grantedComponents);
+            
+            switchView('viewerView');
+        }
+
+        function generateMockVisual(id, isOwner, components) {
+            const project = projects.find(p => p.id === id);
+            
+            // Helper to check if a component is active (Owner sees all)
+            const hasComp = (comp) => isOwner || components.includes(comp);
+            
+            let contentHtml = `<div class="doc-layout">`;
+            
+            contentHtml += `<div class="section-title" style="margin-bottom: 0;">${project.name}</div>`;
+            
+            if (hasComp('abstract')) {
+                contentHtml += `<div class="doc-paragraph">${project.desc}</div>`;
+            }
+
+            // Project 1: Cycloidal Drive
+            if (id === 'p1') {
+                if (hasComp('images') || hasComp('model')) {
+                    contentHtml += `<div class="doc-visual-row">`;
+                    if (hasComp('images')) {
+                        contentHtml += `
+                        <div class="doc-visual-card">
+                            <svg width="200" height="200" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--border-dark)" stroke-width="2" stroke-dasharray="4 2"/>
+                                <circle cx="50" cy="50" r="30" fill="url(#silverGradient)" stroke="var(--text-primary)" stroke-width="1" />
+                                <circle cx="50" cy="50" r="15" fill="var(--bg-base)" stroke="var(--text-primary)" stroke-width="3" />
+                                <path d="M50 10 L50 20 M50 80 L50 90 M10 50 L20 50 M80 50 L90 50" stroke="var(--text-primary)" stroke-width="2"/>
+                                <path d="M22 22 L29 29 M71 71 L78 78 M22 78 L29 71 M78 22 L71 29" stroke="var(--border-dark)" stroke-width="2"/>
+                                <circle cx="50" cy="50" r="5" fill="var(--text-primary)" />
+                            </svg>
+                            <div class="doc-caption">FIG 1.0: Cycloidal Disk Profile</div>
+                        </div>`;
+                    }
+                    if (hasComp('model')) {
+                        contentHtml += `
+                        <div class="doc-visual-card">
+                            <svg width="200" height="200" viewBox="0 0 200 200">
+                                <rect x="40" y="100" width="30" height="80" fill="var(--border-medium)" />
+                                <rect x="90" y="50" width="30" height="130" fill="var(--text-primary)" />
+                                <rect x="140" y="120" width="30" height="60" fill="url(#silverGradient)" stroke="var(--text-primary)"/>
+                                <line x1="20" y1="180" x2="180" y2="180" stroke="var(--text-primary)" stroke-width="2"/>
+                                <text x="55" y="90" font-family="var(--font-mono)" font-size="10" text-anchor="middle">Cam A</text>
+                                <text x="105" y="40" font-family="var(--font-mono)" font-size="10" text-anchor="middle">Cam B</text>
+                            </svg>
+                            <div class="doc-caption">3D VIEW: Dual Eccentric Offset</div>
+                        </div>`;
+                    }
+                    contentHtml += `</div>`;
+                }
+
+                if (hasComp('abstract')) {
+                    contentHtml += `<div class="doc-paragraph">Further dimensional analysis reveals that tolerances must be held to ±0.005mm on the eccentric bearing journals to prevent premature wear during high-load reversing operations.</div>`;
+                }
+
+                if (hasComp('graphs')) {
+                    contentHtml += `
+                    <div class="doc-visual-row">
+                        <div class="doc-visual-card" style="width: 100%;">
+                            <svg width="600" height="150" viewBox="0 0 600 150">
+                                <line x1="30" y1="120" x2="570" y2="120" stroke="var(--text-primary)" stroke-width="1"/>
+                                <line x1="30" y1="20" x2="30" y2="120" stroke="var(--text-primary)" stroke-width="1"/>
+                                <polyline points="30,110 100,105 200,80 300,90 400,40 500,20 570,25" fill="none" stroke="var(--text-primary)" stroke-width="3"/>
+                                <polyline points="30,120 100,115 200,100 300,110 400,80 500,60 570,65" fill="none" stroke="var(--border-medium)" stroke-width="2" stroke-dasharray="4 4"/>
+                            </svg>
+                            <div class="doc-caption">CHART 1.2: Strain vs Lifecycle (Solid: Hardened 4140, Dashed: Standard)</div>
+                        </div>
+                    </div>`;
+                }
+            } 
+            // Project 2: CFD Analysis
+            else if (id === 'p2') {
+                if (hasComp('data') || hasComp('graphs')) {
+                    contentHtml += `<div class="doc-visual-row">`;
+                    if (hasComp('data')) {
+                        contentHtml += `
+                        <div class="doc-visual-card">
+                            <svg width="250" height="150" viewBox="0 0 250 150">
+                                <line x1="20" y1="130" x2="230" y2="130" stroke="var(--text-primary)" stroke-width="1"/>
+                                <line x1="20" y1="20" x2="20" y2="130" stroke="var(--text-primary)" stroke-width="1"/>
+                                <circle cx="50" cy="100" r="3" fill="var(--text-primary)"/><circle cx="80" cy="80" r="4" fill="var(--text-primary)"/>
+                                <circle cx="120" cy="110" r="2" fill="var(--text-primary)"/><circle cx="150" cy="50" r="5" fill="var(--text-primary)"/>
+                                <circle cx="190" cy="60" r="3" fill="var(--text-primary)"/><circle cx="210" cy="30" r="4" fill="var(--text-primary)"/>
+                                <line x1="30" y1="110" x2="220" y2="30" stroke="var(--border-medium)" stroke-width="2" stroke-dasharray="5 5"/>
+                            </svg>
+                            <div class="doc-caption">DATA PLOT: Boundary Layer Separation Nodes</div>
+                        </div>`;
+                    }
+                    if (hasComp('graphs')) {
+                        contentHtml += `
+                        <div class="doc-visual-card">
+                            <svg width="250" height="150" viewBox="0 0 250 150">
+                                <path d="M 10 75 Q 125 10 240 75" fill="none" stroke="var(--text-primary)" stroke-width="2"/>
+                                <path d="M 10 95 Q 125 30 240 95" fill="none" stroke="var(--border-dark)" stroke-width="2"/>
+                                <path d="M 10 115 Q 125 50 240 115" fill="none" stroke="var(--border-medium)" stroke-width="2"/>
+                                <polygon points="120,60 130,60 140,80 110,80" fill="var(--text-primary)"/>
+                            </svg>
+                            <div class="doc-caption">SIM: Mach 2.4 Shockwave Deflection Profile</div>
+                        </div>`;
+                    }
+                    contentHtml += `</div>`;
+                }
+
+                if (hasComp('abstract')) {
+                    contentHtml += `<div class="doc-paragraph">Raw telemetry indicates localized pressure spikes exceeding 4.2 MPa at the throat convergence. Recommend resizing the bypass bleed doors by +12% area to accommodate the spillover and prevent compressor stall.</div>`;
+                }
+            } 
+            // Project 3: ASV Schematic
+            else if (id === 'p3') {
+                if (hasComp('model')) {
+                    contentHtml += `
+                    <div class="doc-visual-row">
+                        <div class="doc-visual-card" style="width: 100%;">
+                            <svg width="500" height="200" viewBox="0 0 500 200">
+                                <path d="M 50 100 Q 250 160 450 100 Q 250 180 50 100" fill="url(#silverGradient)" stroke="var(--text-primary)" stroke-width="2"/>
+                                <path d="M 50 100 Q 250 40 450 100" fill="none" stroke="var(--border-dark)" stroke-width="1" stroke-dasharray="4 4"/>
+                                <line x1="250" y1="40" x2="250" y2="168" stroke="var(--text-primary)" stroke-width="1" />
+                                <rect x="245" y="10" width="10" height="30" fill="var(--text-primary)"/>
+                                <circle cx="250" cy="10" r="8" fill="var(--bg-base)" stroke="var(--text-primary)" stroke-width="2"/>
+                                <text x="265" y="15" font-family="var(--font-mono)" font-size="10" fill="var(--text-secondary)">LIDAR ARRAY</text>
+                                <line x1="150" y1="70" x2="150" y2="130" stroke="var(--border-medium)" stroke-width="1" />
+                                <line x1="350" y1="70" x2="350" y2="130" stroke="var(--border-medium)" stroke-width="1" />
+                            </svg>
+                            <div class="doc-caption">DWG: ASV Hull Integration & Mast Location</div>
+                        </div>
+                    </div>`;
+                }
+                
+                if (hasComp('images')) {
+                    contentHtml += `
+                    <div class="doc-visual-row">
+                        <div class="doc-visual-card">
+                            <svg width="200" height="200" viewBox="0 0 200 200">
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="var(--border-light)" stroke-width="1"/>
+                                <circle cx="100" cy="100" r="50" fill="none" stroke="var(--border-light)" stroke-width="1"/>
+                                <line x1="100" y1="20" x2="100" y2="180" stroke="var(--border-light)" stroke-width="1"/>
+                                <line x1="20" y1="100" x2="180" y2="100" stroke="var(--border-light)" stroke-width="1"/>
+                                <polygon points="100,30 150,80 120,160 70,140 40,90" fill="url(#silverGradient)" stroke="var(--text-primary)" stroke-width="2" opacity="0.8"/>
+                            </svg>
+                            <div class="doc-caption">SENSOR FOV: Polar Coverage Overlap</div>
+                        </div>
+                    </div>`;
+                }
+            } 
+            // Project 4: Boat Hull Draft
+            else {
+                if (hasComp('data')) {
+                    contentHtml += `
+                    <div class="doc-visual-row">
+                        <div class="doc-visual-card" style="width: 100%; align-items: flex-start; gap: 8px;">
+                            <div style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: bold; margin-bottom: 8px;">TABLE 1.0: Hydrodynamic Drag Coefficients</div>
+                            <table style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.75rem;">
+                                <tr style="border-bottom: 1px solid var(--border-medium);">
+                                    <th style="text-align: left; padding: 8px;">Froude No.</th>
+                                    <th style="text-align: left; padding: 8px;">Baseline Drag (N)</th>
+                                    <th style="text-align: left; padding: 8px;">Stepped Drag (N)</th>
+                                    <th style="text-align: left; padding: 8px;">Delta %</th>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border-light);">
+                                    <td style="padding: 8px;">Fn 0.4</td><td style="padding: 8px;">1245.2</td><td style="padding: 8px;">1210.5</td><td style="padding: 8px;">-2.7%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border-light);">
+                                    <td style="padding: 8px;">Fn 0.8</td><td style="padding: 8px;">2890.1</td><td style="padding: 8px;">2450.8</td><td style="padding: 8px; font-weight: bold;">-15.2%</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px;">Fn 1.2</td><td style="padding: 8px;">4120.4</td><td style="padding: 8px;">3210.0</td><td style="padding: 8px; font-weight: bold;">-22.1%</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>`;
+                }
+                if (hasComp('abstract')) {
+                    contentHtml += `<div class="doc-paragraph">The step induces an artificial ventilation cavity at Fn > 0.6, which effectively disconnects the wetted surface area of the aft hull section. This dramatically reduces viscous resistance, though it introduces a dynamic instability in pitch that requires active trim tab compensation at speeds exceeding 40 knots.</div>`;
+                }
+            }
+            
+            // If nothing is selected beyond Title
+            if (!hasComp('abstract') && !hasComp('images') && !hasComp('model') && !hasComp('data') && !hasComp('graphs')) {
+                 contentHtml += `
+                 <div style="padding: 48px; text-align: center; font-family: var(--font-mono); color: var(--text-tertiary); font-size: 0.85rem; border: 1px dashed var(--border-medium); margin-top: 24px;">
+                    Additional components (Abstract, Images, Data) are not included in this access grant.
+                 </div>`;
+            }
+
+            contentHtml += `
+                <div class="doc-paragraph" style="margin-top: 24px; border-top: 1px solid var(--border-light); padding-top: 16px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-tertiary);">
+                    CONFIDENTIALITY NOTICE: This material is dynamically watermarked and monitored via AI Passport. Unauthorized extraction or screenshotting is cryptographically logged.
+                </div>
+            </div>
+            <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+                <defs>
+                    <linearGradient id="silverGradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#ffffff" />
+                        <stop offset="100%" stop-color="#dcdcdc" />
+                    </linearGradient>
+                </defs>
+            </svg>`;
+            
+            return contentHtml;
+        }
+
+        function updateStats() {
+            const active = shares.filter(s => s.status === 'active').length;
+            const expired = shares.filter(s => s.status === 'expired' || s.status === 'revoked').length;
+            const recipients = new Set(shares.map(s => s.recipient)).size;
+            
+            document.getElementById('statActive').innerText = active;
+            document.getElementById('statExpired').innerText = expired;
+            document.getElementById('statRecipients').innerText = recipients;
+            document.getElementById('navActiveCount').innerText = shares.length;
+        }
+
+        function generateId() {
+            return Math.random().toString(36).substring(2, 9).toUpperCase();
+        }
+
+        function openShareModal(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            currentShareSetup = { project, components: ['title', 'abstract'] }; // Defaults
+            
+            document.getElementById('modalFileName').innerText = project.name;
+            document.getElementById('generatedPasskey').innerText = `PASS-${generateId()}-${generateId().substring(0,3)}`;
+            document.getElementById('recipientInput').value = '';
+            
+            // Reset component toggles
+            document.querySelectorAll('.component-item .toggle-switch:not(.fixed)').forEach(el => el.classList.remove('active'));
+            document.getElementById('comp-abstract').classList.add('active'); // Default abstract on
+            
+            document.getElementById('modalSetupState').style.display = 'flex';
+            document.getElementById('modalProcessingState').style.display = 'none';
+            document.getElementById('modalFooter').style.display = 'flex';
+            
+            document.getElementById('shareModal').classList.add('active');
+        }
+
+        function toggleComponent(toggleId) {
+            const toggle = document.getElementById(toggleId);
+            toggle.classList.toggle('active');
+            
+            // Update internal state array based on DOM
+            const componentName = toggleId.replace('comp-', '');
+            if (toggle.classList.contains('active')) {
+                if(!currentShareSetup.components.includes(componentName)) {
+                    currentShareSetup.components.push(componentName);
+                }
+            } else {
+                currentShareSetup.components = currentShareSetup.components.filter(c => c !== componentName);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('shareModal').classList.remove('active');
+            currentShareSetup = null;
+        }
+
+        function copyPasskey() {
+            showToast("Secure Link Copied to Clipboard");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function activateShare() {
+            const recipient = document.getElementById('recipientInput').value || "Anonymous Verifier";
+            const passkey = document.getElementById('generatedPasskey').innerText;
+            const timeSelection = document.getElementById('accessWindow').value;
+            const watermark = document.getElementById('watermarkToggle').classList.contains('active');
+            const payment = document.getElementById('paymentToggle').classList.contains('active');
+            
+            // Copy the active components array
+            const grantedComponents = [...currentShareSetup.components];
+            
+            // UI Transition to processing
+            document.getElementById('modalSetupState').style.display = 'none';
+            document.getElementById('modalFooter').style.display = 'none';
+            document.getElementById('modalProcessingState').style.display = 'flex';
+
+            setTimeout(() => {
+                const newShare = {
+                    id: 's' + Date.now(),
+                    projectId: currentShareSetup.project.id,
+                    recipient: recipient,
+                    passkey: passkey,
+                    timeRemaining: timeSelection === '24h' ? '23h 59m' : (timeSelection === '72h' ? '71h 59m' : '6d 23h'),
+                    views: 0,
+                    status: 'active',
+                    components: grantedComponents,
+                    watermark: watermark,
+                    payment: payment,
+                    timestamp: new Date().toISOString(),
+                    history: [
+                        { time: new Date().toISOString(), event: `Passport Link Generated for ${recipient}` },
+                        { time: new Date().toISOString(), event: `Granted Components: ${grantedComponents.join(', ')}` },
+                        { time: new Date().toISOString(), event: `Cryptographic proof anchored to @parth` }
+                    ]
+                };
+
+                shares.unshift(newShare);
+                renderDashboard();
+                updateStats();
+                closeModal();
+                switchView('dashboardView');
+                showToast("Passport Link Activated");
+            }, 1500);
+        }
+
+        function renderDashboard() {
+            const tbody = document.getElementById('sharesTableBody');
+            tbody.innerHTML = shares.map(share => {
+                const project = projects.find(p => p.id === share.projectId);
+                
+                let statusClass = share.status === 'active' ? 'status-active' : 'status-revoked';
+                let actionBtn = share.status === 'active' 
+                    ? `<button class="btn btn-sm" onclick="event.stopPropagation(); revokeShare('${share.id}')">Revoke</button>`
+                    : `<span class="td-mono" style="color: var(--text-tertiary)">Closed</span>`;
+
+                return `
+                    <tr class="interactive" onclick="openAuditPanel('${share.id}')">
+                        <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${project.name}
+                        </td>
+                        <td>${share.recipient}</td>
+                        <td class="td-mono">${share.passkey}</td>
+                        <td class="td-mono">${share.timeRemaining}</td>
+                        <td class="td-mono">${share.views}</td>
+                        <td><span class="status-badge ${statusClass}">${share.status.toUpperCase()}</span></td>
+                        <td>${actionBtn}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function revokeShare(shareId) {
+            const share = shares.find(s => s.id === shareId);
+            if(share) {
+                share.status = 'revoked';
+                share.timeRemaining = 'Revoked';
+                share.history.push({ time: new Date().toISOString(), event: "MANUAL REVOCATION TRIGGERED by Owner" });
+                renderDashboard();
+                updateStats();
+                showToast("Access Revoked Immediately");
+            }
+        }
+
+        // Custom JSON formatter to handle arrays/brackets nicely
+        function formatJSON(json) {
+            let str = JSON.stringify(json, null, 2);
+            str = str.replace(/([\[\]\{\}])/g, '<span class="json-bracket">$1</span>');
+            str = str.replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:');
+            str = str.replace(/: "([^"]+)"/g, ': <span class="json-string">"$1"</span>');
+            str = str.replace(/: ([0-9]+)/g, ': <span class="json-number">$1</span>');
+            str = str.replace(/: (true|false)/g, ': <span class="json-boolean">$1</span>');
+            return str;
+        }
+
+        function openAuditPanel(shareId) {
+            const share = shares.find(s => s.id === shareId);
+            const project = projects.find(p => p.id === share.projectId);
+            
+            const receiptData = {
+                "passport_issuance": {
+                    "owner_handle": "@parth",
+                    "owner_id": "usr_99x821_a",
+                    "timestamp": share.timestamp,
+                },
+                "asset_context": {
+                    "asset_hash": "0x" + Math.random().toString(16).substring(2, 10) + "..." + Math.random().toString(16).substring(2, 6),
+                    "file_type": project.type,
+                    "components_granted": share.components
+                },
+                "security_policies": {
+                    "watermark_enforced": share.watermark,
+                    "download_allowed": false,
+                    "payment_gate_active": share.payment,
+                    "auth_passkey": share.passkey
+                },
+                "cryptographic_signature": {
+                    "merkle_root": "0x8f0c39a...3a91",
+                    "verified": true
+                }
+            };
+
+            document.getElementById('auditJson').innerHTML = formatJSON(receiptData);
+            
+            // Inject the new historical stats table into the audit panel
+            document.getElementById('auditAssetStats').innerHTML = `
+                <div class="form-label" style="margin-bottom: 12px; margin-top: 24px;">Asset Lifetime Audit (All Shares)</div>
+                <div class="audit-stats-box">
+                    <div class="audit-stat-row">
+                        <span style="color: var(--text-secondary)">Total Prior Grants</span>
+                        <span style="font-family: var(--font-mono); font-weight: 500;">${project.auditStats.previousAccesses}</span>
+                    </div>
+                    <div class="audit-stat-row">
+                        <span style="color: var(--text-secondary)">Total Viewers Logged</span>
+                        <span style="font-family: var(--font-mono); font-weight: 500;">${project.auditStats.totalVisitors}</span>
+                    </div>
+                    <div class="audit-stat-row">
+                        <span style="color: var(--text-secondary)">Escrow Gates Triggered</span>
+                        <span style="font-family: var(--font-mono); font-weight: 500;">${project.auditStats.paymentRequiredCount}</span>
+                    </div>
+                    <div class="audit-stat-row">
+                        <span style="color: var(--text-secondary)">Paid / Unlocked By</span>
+                        <span style="font-family: var(--font-mono); text-align: right; max-width: 60%;">
+                            ${project.auditStats.paidBy.length > 0 ? project.auditStats.paidBy.join("<br>") : "None"}
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('auditTimeline').innerHTML = share.history.map(h => `
+                <div class="timeline-item">
+                    <div class="timeline-time">${new Date(h.time).toLocaleString('en-US', {hour12: false})}</div>
+                    <div class="timeline-desc">${h.event}</div>
+                </div>
+            `).reverse().join('');
+
+            document.getElementById('auditOverlay').classList.add('active');
+            document.getElementById('auditPanel').classList.add('active');
+        }
+
+        function closeAuditPanel() {
+            document.getElementById('auditOverlay').classList.remove('active');
+            document.getElementById('auditPanel').classList.remove('active');
+        }
+
+        // Run
+        window.onload = init;
+    </script>
+</body>
+</html>
