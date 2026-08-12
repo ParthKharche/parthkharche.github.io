@@ -1531,6 +1531,10 @@
 
             document.getElementById('auditJson').innerHTML = formatJSON(receiptData);
             
+            // Generate the dynamic paidBy list based on the current share recipient
+            // If payment was required, show the recipient, otherwise show "None"
+            let paidByDisplay = share.recipient;
+
             // Inject the new historical stats table into the audit panel
             document.getElementById('auditAssetStats').innerHTML = `
                 <div class="form-label" style="margin-bottom: 12px; margin-top: 24px;">Asset Lifetime Audit (All Shares)</div>
@@ -1550,7 +1554,7 @@
                     <div class="audit-stat-row">
                         <span style="color: var(--text-secondary)">Paid / Unlocked By</span>
                         <span style="font-family: var(--font-mono); text-align: right; max-width: 60%;">
-                            ${project.auditStats.paidBy.length > 0 ? project.auditStats.paidBy.join("<br>") : "None"}
+                            ${paidByDisplay}
                         </span>
                     </div>
                 </div>
